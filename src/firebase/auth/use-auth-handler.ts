@@ -27,7 +27,7 @@ export function useAuthHandler() {
             email: user.email || '',
             displayName: user.displayName || 'Anonymous User',
             photoURL: user.photoURL,
-            role: 'user', // default role
+            role: 'admin', // default role
             newsletterSub: false,
             mailAdmin: false,
             createdAt: serverTimestamp(),
