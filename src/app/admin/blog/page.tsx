@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useCollection, useFirestore } from '@/firebase';
 import { collection, query, orderBy, deleteDoc, doc } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
@@ -35,12 +35,14 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Card } from '@/components/ui/card';
+import { useSearchParams } from 'next/navigation';
 
 export default function ManageBlogPostsPage() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
   const firestore = useFirestore();
   const { toast } = useToast();
+  const searchParams = useSearchParams();
 
   const blogPostsQuery = useMemo(() => {
     if (!firestore) return null;
@@ -54,10 +56,10 @@ export default function ManageBlogPostsPage() {
     setIsFormOpen(true);
   };
 
-  const handleCreateNew = () => {
+  const handleCreateNew = useCallback(() => {
     setSelectedPost(null);
     setIsFormOpen(true);
-  };
+  }, []);
 
   const handleDelete = async (postId: string) => {
     if (!firestore) return;
@@ -75,6 +77,12 @@ export default function ManageBlogPostsPage() {
         setSelectedPost(null);
     }
   }, [isFormOpen])
+
+  useEffect(() => {
+    if (searchParams.get('createNew')) {
+        handleCreateNew();
+    }
+  }, [searchParams, handleCreateNew]);
 
   return (
     <div>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useCollection, useFirestore } from '@/firebase';
 import { collection, query, orderBy, deleteDoc, doc } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
@@ -18,11 +18,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-  DialogFooter,
 } from '@/components/ui/dialog';
 import { PlusCircle, Edit, Trash2 } from 'lucide-react';
 import { EventForm } from '@/components/events/event-form';
-import type { Event, EventFormValues } from '@/firebase/models';
+import type { Event } from '@/firebase/models';
 import { useToast } from '@/hooks/use-toast';
 import {
   AlertDialog,
@@ -34,13 +33,16 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
+} from "@/components/ui/alert-dialog";
+import { useSearchParams } from 'next/navigation';
+import { Card } from '@/components/ui/card';
 
 export default function ManageEventsPage() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const firestore = useFirestore();
   const { toast } = useToast();
+  const searchParams = useSearchParams();
 
   const eventsQuery = useMemo(() => {
     if (!firestore) return null;
@@ -54,10 +56,10 @@ export default function ManageEventsPage() {
     setIsFormOpen(true);
   };
 
-  const handleCreateNew = () => {
+  const handleCreateNew = useCallback(() => {
     setSelectedEvent(null);
     setIsFormOpen(true);
-  };
+  }, []);
 
   const handleDelete = async (eventId: string) => {
     if (!firestore) return;
@@ -74,7 +76,13 @@ export default function ManageEventsPage() {
     if(!isFormOpen) {
         setSelectedEvent(null);
     }
-  }, [isFormOpen])
+  }, [isFormOpen]);
+
+  useEffect(() => {
+    if (searchParams.get('createNew')) {
+        handleCreateNew();
+    }
+  }, [searchParams, handleCreateNew]);
 
   return (
     <div>
@@ -159,10 +167,3 @@ export default function ManageEventsPage() {
     </div>
   );
 }
-
-// Dummy Card component to resolve TS error, assuming it exists elsewhere.
-const Card = ({ children, className }: { children: React.ReactNode, className?: string }) => (
-  <div className={`rounded-lg border bg-card text-card-foreground shadow-sm ${className}`}>
-    {children}
-  </div>
-);

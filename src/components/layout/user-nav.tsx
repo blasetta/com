@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { LayoutDashboard, LifeBuoy, LogOut, User as UserIcon, Settings, Mail } from 'lucide-react';
+import { LayoutDashboard, LogOut, User as UserIcon, CalendarPlus, FilePlus } from 'lucide-react';
 import { useAuthHandler } from '@/firebase/auth/use-auth-handler';
 
 export function UserNav() {
@@ -82,12 +82,26 @@ export function UserNav() {
             </Link>
           </DropdownMenuItem>
           {userProfile?.role === 'admin' && (
-            <DropdownMenuItem asChild>
-              <Link href="/admin">
-                <LayoutDashboard className="mr-2 h-4 w-4" />
-                <span>Admin Dashboard</span>
-              </Link>
-            </DropdownMenuItem>
+            <>
+              <DropdownMenuItem asChild>
+                <Link href="/admin">
+                  <LayoutDashboard className="mr-2 h-4 w-4" />
+                  <span>Admin Dashboard</span>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/admin/events?createNew=true">
+                  <CalendarPlus className="mr-2 h-4 w-4" />
+                  <span>New Event</span>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/admin/blog?createNew=true">
+                  <FilePlus className="mr-2 h-4 w-4" />
+                  <span>New Blog Post</span>
+                </Link>
+              </DropdownMenuItem>
+            </>
           )}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
