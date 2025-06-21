@@ -1,0 +1,278 @@
+{
+  "entities": {
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema",
+      "title": "User",
+      "description": "Represents a user of the ComTech Hub Roma application.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "Unique ID from Google Auth. Primary key. The specific format and generation strategy depend on the target database implementation."
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "User's email address for contact and search purposes."
+        },
+        "displayName": {
+          "type": "string",
+          "description": "User's full name from Google."
+        },
+        "photoURL": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL of the user's profile picture."
+        },
+        "role": {
+          "type": "string",
+          "description": "User's role in the application (user or admin).",
+          "enum": [
+            "user",
+            "admin"
+          ]
+        },
+        "newsletterSub": {
+          "type": "boolean",
+          "description": "Indicates whether the user is subscribed to the newsletter (true) or not (false)."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp indicating when the user document was created."
+        },
+        "mailAdmin": {
+          "type": "boolean",
+          "description": "Indicates whether the user wants to receive newsletter first sendings (true) or not (false)."
+        }
+      },
+      "required": [
+        "uid",
+        "email",
+        "displayName",
+        "photoURL",
+        "role",
+        "newsletterSub",
+        "createdAt",
+        "mailAdmin"
+      ]
+    },
+    "BlogPost": {
+      "$schema": "http://json-schema.org/draft-07/schema",
+      "title": "BlogPost",
+      "description": "Represents a blog post in the ComTech Hub Roma application.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the BlogPost entity. The specific format and generation strategy depend on the target database implementation."
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the blog post."
+        },
+        "content": {
+          "type": "string",
+          "description": "The content/description of the blog post."
+        },
+        "externalURL": {
+          "type": "string",
+          "format": "uri",
+          "description": "The external URL where the full blog post can be found. Optional."
+        },
+        "imageURL": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL of the image associated with the blog post. Optional."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp indicating when the blog post was created."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp indicating when the blog post was last updated."
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "content",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Event": {
+      "$schema": "http://json-schema.org/draft-07/schema",
+      "title": "Event",
+      "description": "Represents an event in the ComTech Hub Roma application.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Event entity. The specific format and generation strategy depend on the target database implementation."
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the event."
+        },
+        "description": {
+          "type": "string",
+          "description": "The description of the event."
+        },
+        "eventDateTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The date and time of the event."
+        },
+        "location": {
+          "type": "string",
+          "description": "The location of the event (can be a string or a map link)."
+        },
+        "imageURL": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL of the image associated with the event. Optional."
+        },
+        "attendeeLimit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "The maximum number of attendees allowed for the event. Optional."
+        },
+        "isRecurring": {
+          "type": "boolean",
+          "description": "Indicates whether the event is a one-time event (false) or a recurring training (true). Optional."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp indicating when the event was created."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp indicating when the event was last updated."
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "description",
+        "eventDateTime",
+        "location",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Newsletter": {
+      "$schema": "http://json-schema.org/draft-07/schema",
+      "title": "Newsletter",
+      "description": "Represents a newsletter created by an admin in the ComTech Hub Roma application.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Newsletter entity. The specific format and generation strategy depend on the target database implementation."
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the newsletter."
+        },
+        "content": {
+          "type": "string",
+          "description": "The content of the newsletter."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp indicating when the newsletter was created."
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "content",
+        "createdAt"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "definition": {
+          "description": "Collection containing individual user profile documents.",
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "params": [
+            {
+              "description": "The unique ID of the user (from Google Auth).",
+              "name": "userId"
+            }
+          ]
+        },
+        "path": "/users/{userId}"
+      },
+      {
+        "definition": {
+          "description": "Collection containing blog post documents.",
+          "entityName": "BlogPost",
+          "schema": {
+            "$ref": "#/backend/entities/BlogPost"
+          },
+          "params": [
+            {
+              "description": "The unique ID of the blog post.",
+              "name": "blogPostId"
+            }
+          ]
+        },
+        "path": "/blogPosts/{blogPostId}"
+      },
+      {
+        "definition": {
+          "description": "Collection containing event documents.",
+          "entityName": "Event",
+          "schema": {
+            "$ref": "#/backend/entities/Event"
+          },
+          "params": [
+            {
+              "description": "The unique ID of the event.",
+              "name": "eventId"
+            }
+          ]
+        },
+        "path": "/events/{eventId}"
+      },
+      {
+        "definition": {
+          "description": "Collection containing newsletter documents.",
+          "entityName": "Newsletter",
+          "schema": {
+            "$ref": "#/backend/entities/Newsletter"
+          },
+          "params": [
+            {
+              "description": "The unique ID of the newsletter.",
+              "name": "newsletterId"
+            }
+          ]
+        },
+        "path": "/newsletters/{newsletterId}"
+      }
+    ],
+    "reasoning": "Based on the entities provided and the application proposal, I recommend the following Firestore collection structure:\n\n*   **/users/{userId}**: This collection stores user profile data.  The `{userId}` corresponds to the user's `uid` from Google Auth. Key fields include `email`, `displayName`, `photoURL`, `role`, `newsletterSub`, `createdAt`, and `mailAdmin`.\n*   **/blogPosts/{blogPostId}**: This collection stores blog post data. The `{blogPostId}` is the unique identifier for each blog post. Key fields include `title`, `content`, `externalURL`, `imageURL`, `createdAt`, and `updatedAt`.\n*   **/events/{eventId}**: This collection stores event data. The `{eventId}` is the unique identifier for each event. Key fields include `title`, `description`, `eventDateTime`, `location`, `imageURL`, `attendeeLimit`, `isRecurring`, `createdAt`, and `updatedAt`.\n*   **/newsletters/{newsletterId}**: This collection stores newsletter data. The `{newsletterId}` is the unique identifier for each newsletter. Key fields include `title`, `content`, and `createdAt`. This collection is used by admins to create newsletters, which are then sent to users who have `mailAdmin` set to `true`.\n\nNo top-level `/registrations` collection is needed, as the proposal doesn't include direct registration functionality and focuses on external subscriptions. The `Admin` role is managed directly within the user document and doesn't require a separate collection."
+  }
+}

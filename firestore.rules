@@ -1,0 +1,48 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Users Collection
+    match /users/{userId} {
+      // Allow read access to any authenticated user.
+      allow get: if request.auth != null;
+
+      // Allow write access only if the user is authenticated and the userId matches the document ID.
+      // Also, allow admins to create/update any user document.
+      allow create, update: if request.auth != null && (request.auth.uid == userId || (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'));
+
+      // Only admins can delete user documents.
+      allow delete: if get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // BlogPosts Collection
+    match /blogPosts/{blogPostId} {
+      // Allow read access to all.
+      allow get: if true;
+
+      // Allow create, update, and delete only for admins.
+      allow create, update, delete: if get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Events Collection
+    match /events/{eventId} {
+      // Allow read access to all.
+      allow get: if true;
+
+      // Allow create, update, and delete only for admins.
+      allow create, update, delete: if get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Newsletters Collection
+    match /newsletters/{newsletterId} {
+      // Allow read access to all.
+      allow get: if true;
+
+      // Allow create only for admins.
+      allow create: if get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+
+     // No updates or deletes allowed for newsletters after creation to maintain history.  This could be revised if edits are required.
+      allow update, delete: if false;
+    }
+  }
+}
