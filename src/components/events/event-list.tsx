@@ -1,11 +1,15 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { useCollection, useFirestore } from '@/firebase';
+import { useCollection, useFirestore, useUser } from '@/firebase';
 import { collection, query, orderBy, where, Timestamp } from 'firebase/firestore';
 import { EventCard } from './event-card';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { Event } from '@/firebase/models';
+import { useUserProfile } from '@/hooks/use-user-profile';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import { PlusCircle } from 'lucide-react';
 
 interface EventListProps {
   type: 'upcoming' | 'past';
@@ -13,6 +17,8 @@ interface EventListProps {
 
 export function EventList({ type }: EventListProps) {
   const firestore = useFirestore();
+  const { user, isUserLoading } = useUser();
+  const { userProfile, isLoading: isProfileLoading } = useUserProfile(user?.uid);
   const [now] = useState(() => Timestamp.now());
   
   const eventsQuery = useMemo(() => {
@@ -25,7 +31,9 @@ export function EventList({ type }: EventListProps) {
     );
   }, [firestore, type, now]);
 
-  const { data: events, isLoading, error } = useCollection<Event>(eventsQuery);
+  const { data: events, isLoading: areEventsLoading, error } = useCollection<Event>(eventsQuery);
+
+  const isLoading = isUserLoading || isProfileLoading || areEventsLoading;
 
   if (isLoading) {
     return (
@@ -42,7 +50,20 @@ export function EventList({ type }: EventListProps) {
   }
   
   if (!events || events.length === 0) {
-    return <p className="text-center text-muted-foreground">No {type} events found.</p>;
+    return (
+        <div className="text-center py-10 border-2 border-dashed border-muted rounded-lg flex flex-col items-center justify-center">
+            <h3 className="text-xl font-semibold text-muted-foreground">No {type} events found.</h3>
+            <p className="mt-2 text-muted-foreground">Check back later for new events.</p>
+            {userProfile?.role === 'admin' && (
+            <Button asChild className="mt-4">
+                <Link href="/admin/events">
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Create a New Event
+                </Link>
+            </Button>
+            )}
+        </div>
+    );
   }
 
   return (
