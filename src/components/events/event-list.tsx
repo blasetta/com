@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useCollection, useFirestore } from '@/firebase';
 import { collection, query, orderBy, where, Timestamp } from 'firebase/firestore';
 import { EventCard } from './event-card';
@@ -13,17 +13,17 @@ interface EventListProps {
 
 export function EventList({ type }: EventListProps) {
   const firestore = useFirestore();
+  const [now] = useState(() => Timestamp.now());
   
   const eventsQuery = useMemo(() => {
     if (!firestore) return null;
-    const now = Timestamp.now();
     const operator = type === 'upcoming' ? '>=' : '<';
     return query(
         collection(firestore, 'events'), 
         where('eventDateTime', operator, now),
         orderBy('eventDateTime', type === 'upcoming' ? 'asc' : 'desc')
     );
-  }, [firestore, type]);
+  }, [firestore, type, now]);
 
   const { data: events, isLoading, error } = useCollection<Event>(eventsQuery);
 

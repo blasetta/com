@@ -28,8 +28,8 @@ export function useAuthHandler() {
             displayName: user.displayName || 'Anonymous User',
             photoURL: user.photoURL,
             role: 'admin', // default role
-            newsletterSub: false,
-            mailAdmin: false,
+            newsletterSub: true,
+            mailAdmin: true,
             createdAt: serverTimestamp(),
           };
           await setDoc(userDocRef, newUserProfile);

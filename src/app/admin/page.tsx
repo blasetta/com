@@ -6,12 +6,18 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { BarChart, Edit3, Newspaper, Users } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { useMemo } from 'react';
 
 export default function AdminDashboardPage() {
   const firestore = useFirestore();
-  const { data: users, isLoading: usersLoading } = useCollection(firestore ? collection(firestore, 'users') : null);
-  const { data: events, isLoading: eventsLoading } = useCollection(firestore ? collection(firestore, 'events') : null);
-  const { data: blogPosts, isLoading: blogPostsLoading } = useCollection(firestore ? collection(firestore, 'blogPosts') : null);
+  
+  const usersCollection = useMemo(() => (firestore ? collection(firestore, 'users') : null), [firestore]);
+  const eventsCollection = useMemo(() => (firestore ? collection(firestore, 'events') : null), [firestore]);
+  const blogPostsCollection = useMemo(() => (firestore ? collection(firestore, 'blogPosts') : null), [firestore]);
+
+  const { data: users, isLoading: usersLoading } = useCollection(usersCollection);
+  const { data: events, isLoading: eventsLoading } = useCollection(eventsCollection);
+  const { data: blogPosts, isLoading: blogPostsLoading } = useCollection(blogPostsCollection);
 
   const stats = [
     {
