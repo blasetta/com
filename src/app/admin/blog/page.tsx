@@ -127,7 +127,7 @@ export default function ManageBlogPostsPage() {
               blogPosts.map((post) => (
                 <TableRow key={post.id}>
                   <TableCell className="font-medium">{post.title}</TableCell>
-                  <TableCell>{post.createdAt.toDate().toLocaleDateString()}</TableCell>
+                  <TableCell>{post.createdAt?.toDate().toLocaleDateString()}</TableCell>
                   <TableCell className="text-right">
                     <Button variant="ghost" size="icon" onClick={() => handleEdit(post)}>
                       <Edit className="h-4 w-4" />
