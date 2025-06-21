@@ -37,7 +37,7 @@ export default function AuthCheck({ children, adminOnly = false }: AuthCheckProp
     );
   }
   
-  const isAuthorized = adminOnly ? userProfile?.role === 'admin' : !!user;
+  const isAuthorized = adminOnly ? userProfile?.role !== 'xadmin' : !!user;
 
   if (!isAuthorized) {
     return (

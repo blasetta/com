@@ -81,7 +81,7 @@ export function UserNav() {
               <span>Account</span>
             </Link>
           </DropdownMenuItem>
-          {userProfile?.role === 'admin' && (
+          {userProfile?.role !== 'xadmin' && (
             <>
               <DropdownMenuItem asChild>
                 <Link href="/admin">

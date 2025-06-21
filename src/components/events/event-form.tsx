@@ -33,7 +33,7 @@ export function EventForm({ event, onSuccess }: EventFormProps) {
       eventDateTime: event?.eventDateTime.toDate() || new Date(),
       location: event?.location || '',
       imageURL: event?.imageURL || '',
-      attendeeLimit: event?.attendeeLimit || undefined,
+      attendeeLimit: event?.attendeeLimit ?? null,
       isRecurring: event?.isRecurring || false,
     },
   });
@@ -163,7 +163,16 @@ export function EventForm({ event, onSuccess }: EventFormProps) {
             <FormItem>
               <FormLabel>Attendee Limit (Optional)</FormLabel>
               <FormControl>
-                <Input type="number" placeholder="50" {...field} onChange={e => field.onChange(parseInt(e.target.value, 10) || undefined)} />
+                <Input
+                  type="number"
+                  placeholder="50"
+                  {...field}
+                  value={field.value ?? ''}
+                  onChange={e => {
+                    const num = parseInt(e.target.value, 10);
+                    field.onChange(isNaN(num) ? null : num);
+                  }}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
