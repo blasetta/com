@@ -1,39 +1,46 @@
+
 rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    function isUserAuthenticated() {
-      return request.auth != null;
-    }
-    
-    function isUserAdmin(uid) {
-        return isUserAuthenticated() && get(/databases/$(database)/documents/users/$(uid)).data.role == 'admin';
-    }
-
-    match /users/{userId} {
-      allow create: if request.auth.uid == userId;
-      
-      allow read: if request.auth.uid == userId || isUserAdmin(request.auth.uid);
-      
-      // A user can update their own profile. For testing, they can also change their own role.
-      allow update: if request.auth.uid == userId || isUserAdmin(request.auth.uid);
-      
-      allow delete: if isUserAdmin(request.auth.uid);
+    function isAdmin() {
+      // Check if the user document exists and has the 'admin' role.
+      return request.auth != null &&
+             exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
 
-    match /blogPosts/{postId} {
-      allow read: if true;
-      allow write: if isUserAdmin(request.auth.uid);
-    }
-
+    // Public collections: anyone can read, only admins can write.
     match /events/{eventId} {
-      allow read: if true;
-      allow write: if isUserAdmin(request.auth.uid);
+      allow get, list: if true;
+      allow write: if isAdmin();
+    }
+    match /blogPosts/{postId} {
+      allow get, list: if true;
+      allow write: if isAdmin();
     }
 
+    // User profiles
+    match /users/{userId} {
+      // Admins have full access to manage any user.
+      allow read, write: if isAdmin();
+
+      // A user can read their own profile.
+      allow get: if request.auth.uid == userId;
+
+      // A user can create their own profile upon signing up.
+      allow create: if request.auth.uid == userId;
+
+      // FOR TESTING: A user can update their own profile.
+      // This allows the auto-promotion to admin to work.
+      // WARNING: This should be locked down before production.
+      allow update: if request.auth.uid == userId;
+    }
+
+    // Newsletters are entirely admin-managed.
     match /newsletters/{newsletterId} {
-        allow read, write: if isUserAdmin(request.auth.uid);
+      allow read, write: if isAdmin();
     }
   }
 }
