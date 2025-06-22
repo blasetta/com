@@ -51,14 +51,15 @@ export function ChatInterface() {
         } catch (error: any) {
             console.error('Chat error:', error);
             let messageContent = 'Sorry, something went wrong. Please try again.';
-            if (error.message && (error.message.includes('SERVICE_DISABLED') || error.message.includes('API has not been used'))) {
+            // Check for common permission-related errors from Google AI API
+            if (error.message && (error.message.includes('SERVICE_DISABLED') || error.message.includes('API has not been used') || error.message.includes('are blocked'))) {
                 const projectIdMatch = error.message.match(/project(?:s\/|\s|=)(\d+)/);
                 if (projectIdMatch && projectIdMatch[1]) {
                     const projectId = projectIdMatch[1];
                     const enableApiUrl = `https://console.developers.google.com/apis/api/generativelanguage.googleapis.com/overview?project=${projectId}`;
-                    messageContent = `The AI service for this chat is not enabled. Please [click here to enable the Generative Language API](${enableApiUrl}) for your project, wait a few minutes, and then try again.`;
+                    messageContent = `It looks like there's a permission issue with the Generative Language API. This might be due to API key restrictions or other settings in your Google Cloud project. Please [visit the API dashboard](${enableApiUrl}) to check its status and ensure it's configured correctly. It may take a few minutes for changes to apply.`;
                 } else {
-                    messageContent = "The AI service for this chat is not enabled. Please enable the 'Generative Language API' in your Google Cloud project console and try again."
+                    messageContent = "There seems to be a permission issue with the AI service. Please check the 'Generative Language API' settings in your Google Cloud project console."
                 }
             }
             const errorMessage: Message = { role: 'assistant', content: messageContent };
