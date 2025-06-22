@@ -48,7 +48,9 @@ const chatFlow = ai.defineFlow(
     outputSchema: z.string(),
   },
   async (message) => {
-    const {output} = await prompt(message);
+    console.log("XXXXXXXXXXXXXX");
+    console.log(message)
+    const {output} = await prompt(message || '');
     return output || '';
   }
 );
