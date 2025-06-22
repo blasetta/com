@@ -3,44 +3,34 @@
  * @fileOverview A chat agent for the ComTech Hub Roma application.
  *
  * - chat - A function that handles the chat interaction.
- * - ChatInput - The input type for the chat function.
+ * - ChatInput - The input type for the chat function (a string).
  * - ChatOutput - The return type for the chat function (a string).
  */
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-// Define a Zod schema for the chat input.
-const ChatInputSchema = z.object({
-  message: z.string().describe("The user's message to the chat assistant."),
-});
-
-// Export the inferred TypeScript type.
-export type ChatInput = z.infer<typeof ChatInputSchema>;
+// The input is a simple string.
+export type ChatInput = string;
 export type ChatOutput = string;
-
-// Define the prompt for the chat assistant.
-const chatPrompt = ai.definePrompt({
-    name: 'chatPrompt',
-    input: { schema: ChatInputSchema },
-    output: { schema: z.string() },
-    prompt: `You are a friendly and helpful assistant for ComTech Hub Roma, a technology community hub in Rome.
-Your goal is to answer user questions about events, blog posts, and the community.
-Be concise and helpful.
-
-User's message: {{{message}}}
-`,
-});
 
 // Define the main flow that orchestrates the chat logic.
 const chatFlow = ai.defineFlow(
   {
     name: 'chatFlow',
-    inputSchema: ChatInputSchema,
+    inputSchema: z.string(),
     outputSchema: z.string(),
   },
-  async (input) => {
-    const {output} = await chatPrompt(input);
+  async (message) => {
+    // We call the model directly, providing the full prompt.
+    const {output} = await ai.generate({
+        prompt: `You are a friendly and helpful assistant for ComTech Hub Roma, a technology community hub in Rome.
+Your goal is to answer user questions about events, blog posts, and the community.
+Be concise and helpful.
+
+User's message: ${message}
+`,
+    });
     return output || 'I am not sure how to respond to that. Please try rephrasing.';
   }
 );
@@ -48,12 +38,12 @@ const chatFlow = ai.defineFlow(
 /**
  * The public-facing function that UI components will call.
  * It invokes the Genkit flow and handles basic error cases.
- * @param input The user's message, conforming to the ChatInput schema.
+ * @param message The user's message as a string.
  * @returns A string containing the assistant's response.
  */
-export async function chat(input: ChatInput): Promise<ChatOutput> {
+export async function chat(message: ChatInput): Promise<ChatOutput> {
   try {
-    const response = await chatFlow(input);
+    const response = await chatFlow(message);
     return response || 'Sorry, I could not process your request.';
   } catch (e: any) {
     console.error("Error calling chatFlow:", e);
