@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { UserNav } from '@/components/layout/user-nav';
-import { Code2 } from 'lucide-react';
+import { Code2, MessageSquare } from 'lucide-react';
 
 export function Header() {
   return (
@@ -25,6 +25,13 @@ export function Header() {
               className="transition-colors hover:text-foreground/80 text-foreground/60"
             >
               Blog
+            </Link>
+            <Link
+              href="/chat"
+              className="flex items-center transition-colors hover:text-foreground/80 text-foreground/60"
+            >
+               <MessageSquare className="mr-2 h-4 w-4" />
+              Chat
             </Link>
           </nav>
         </div>
