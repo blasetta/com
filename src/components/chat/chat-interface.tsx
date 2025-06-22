@@ -41,17 +41,17 @@ export function ChatInterface() {
 
         const userMessage: Message = { role: 'user', content: input };
         setMessages((prev) => [...prev, userMessage]);
+        const currentInput = input;
         setInput('');
         setIsLoading(true);
 
         try {
-            const response = await chat({ message: input });
+            const response = await chat({ message: currentInput });
             const assistantMessage: Message = { role: 'assistant', content: response };
             setMessages((prev) => [...prev, assistantMessage]);
         } catch (error: any) {
             console.error('Chat error:', error);
             let messageContent = 'Sorry, something went wrong. Please try again.';
-            // Check for common permission-related errors from Google AI API
             if (error.message && (error.message.includes('SERVICE_DISABLED') || error.message.includes('API has not been used') || error.message.includes('are blocked'))) {
                 const projectIdMatch = error.message.match(/project(?:s\/|\s|=)(\d+)/);
                 if (projectIdMatch && projectIdMatch[1]) {

@@ -3,7 +3,7 @@
  * @fileOverview A chat agent for the ComTech Hub Roma application.
  *
  * - chat - A function that handles the chat interaction.
- * - ChatInput - The input type for the chat function (a string).
+ * - ChatInput - The input type for the chat function (an object with a message).
  * - ChatOutput - The return type for the chat function (a string).
  */
 
@@ -11,7 +11,7 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const ChatInputSchema = z.object({
-  message: z.string(),
+    message: z.string(),
 });
 export type ChatInput = z.infer<typeof ChatInputSchema>;
 export type ChatOutput = string;
@@ -52,7 +52,7 @@ const chatFlow = ai.defineFlow(
     inputSchema: ChatInputSchema,
     outputSchema: z.string(),
   },
-    async (input) => {
+  async (input) => {
     const {output} = await prompt(input);
     return output || '';
   }
