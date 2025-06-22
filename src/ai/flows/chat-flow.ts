@@ -3,27 +3,22 @@
  * @fileOverview A chat agent for the ComTech Hub Roma application.
  *
  * - chat - A function that handles the chat interaction.
- * - ChatInput - The input type for the chat function (an object with a 'message' property).
+ * - ChatInput - The input type for the chat function (a string).
  * - ChatOutput - The return type for the chat function (a string).
  */
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-// Define a Zod schema for the input object. This is more robust.
-const ChatInputSchema = z.object({
-  message: z.string().describe('The user’s message to the chatbot.'),
-});
-
-// The input is an object with a 'message' property.
-export type ChatInput = z.infer<typeof ChatInputSchema>;
+// The input is a simple string.
+export type ChatInput = string;
 export type ChatOutput = string;
 
 const prompt = ai.definePrompt({
   name: 'chatPrompt',
   input: {
-    // The prompt expects an object matching ChatInputSchema.
-    schema: ChatInputSchema,
+    // The prompt expects a raw string.
+    schema: z.string(),
   },
   output: {schema: z.string()},
   config: {
@@ -66,23 +61,24 @@ If the user is an admin, they also have access to:
 
 When a user asks to perform an action, provide a direct link if possible. For example, if they ask "how to create an event", respond with something like: "You can create a new event on the [admin events page](/admin/events?createNew=true)."
 
-User's message: {{{message}}}
+User's message: {{{prompt}}}
 `,
 });
 
 const chatFlow = ai.defineFlow(
   {
     name: 'chatFlow',
-    inputSchema: ChatInputSchema, // Flow expects an object.
+    inputSchema: z.string(), // Flow expects a string.
     outputSchema: z.string(),
   },
-  async (input) => {
-    const {output} = await prompt(input);
+  async (message) => {
+    // The input 'message' is the raw string.
+    const {output} = await prompt(message);
     return output || '';
   }
 );
 
-export async function chat(input: ChatInput): Promise<ChatOutput> {
-  const response = await chatFlow(input);
+export async function chat(message: ChatInput): Promise<ChatOutput> {
+  const response = await chatFlow(message);
   return response || 'Sorry, I could not process your request.';
 }
