@@ -10,13 +10,16 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-export type ChatInput = string;
+const ChatInputSchema = z.object({
+  message: z.string(),
+});
+export type ChatInput = z.infer<typeof ChatInputSchema>;
 export type ChatOutput = string;
 
 const prompt = ai.definePrompt({
   name: 'chatPrompt',
   input: {
-    schema: z.string(),
+    schema: ChatInputSchema,
   },
   output: {schema: z.string()},
   prompt: `You are a helpful assistant for the "ComTech Hub Roma" web application.
@@ -39,23 +42,23 @@ If the user is an admin, they also have access to:
 
 When a user asks to perform an action, provide a direct link if possible. For example, if they ask "how to create an event", respond with something like: "You can create a new event on the [admin events page](/admin/events?createNew=true)."
 
-User's message: {{{prompt}}}
+User's message: {{{message}}}
 `,
 });
 
 const chatFlow = ai.defineFlow(
   {
     name: 'chatFlow',
-    inputSchema: z.string(),
+    inputSchema: ChatInputSchema,
     outputSchema: z.string(),
   },
-    async (message) => {
-    const {output} = await prompt(message);
+    async (input) => {
+    const {output} = await prompt(input);
     return output || '';
   }
 );
 
-export async function chat(message: ChatInput): Promise<ChatOutput> {
-  const response = await chatFlow(message);
+export async function chat(input: ChatInput): Promise<ChatOutput> {
+  const response = await chatFlow(input);
   return response || 'Sorry, I could not process your request.';
 }
