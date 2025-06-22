@@ -15,7 +15,7 @@ export type ChatOutput = string;
 
 const prompt = ai.definePrompt({
   name: 'chatPrompt',
-  input: {schema: z.string()},
+  input: {schema: z.object({ prompt: z.string() })},
   output: {schema: z.string()},
   prompt: `You are a helpful assistant for the "ComTech Hub Roma" web application.
 Your goal is to help users navigate the app and find what they are looking for.
@@ -48,7 +48,7 @@ const chatFlow = ai.defineFlow(
     outputSchema: z.string(),
   },
   async (message) => {
-    const {output} = await prompt(message);
+    const {output} = await prompt({ prompt: message });
     return output || '';
   }
 );
