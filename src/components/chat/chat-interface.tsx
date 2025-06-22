@@ -48,9 +48,20 @@ export function ChatInterface() {
             const response = await chat(input);
             const assistantMessage: Message = { role: 'assistant', content: response };
             setMessages((prev) => [...prev, assistantMessage]);
-        } catch (error) {
+        } catch (error: any) {
             console.error('Chat error:', error);
-            const errorMessage: Message = { role: 'assistant', content: 'Sorry, something went wrong. Please try again.' };
+            let messageContent = 'Sorry, something went wrong. Please try again.';
+            if (error.message && (error.message.includes('SERVICE_DISABLED') || error.message.includes('API has not been used'))) {
+                const projectIdMatch = error.message.match(/project(?:s\/|\s|=)(\d+)/);
+                if (projectIdMatch && projectIdMatch[1]) {
+                    const projectId = projectIdMatch[1];
+                    const enableApiUrl = `https://console.developers.google.com/apis/api/generativelanguage.googleapis.com/overview?project=${projectId}`;
+                    messageContent = `The AI service for this chat is not enabled. Please [click here to enable the Generative Language API](${enableApiUrl}) for your project, wait a few minutes, and then try again.`;
+                } else {
+                    messageContent = "The AI service for this chat is not enabled. Please enable the 'Generative Language API' in your Google Cloud project console and try again."
+                }
+            }
+            const errorMessage: Message = { role: 'assistant', content: messageContent };
             setMessages((prev) => [...prev, errorMessage]);
         } finally {
             setIsLoading(false);
