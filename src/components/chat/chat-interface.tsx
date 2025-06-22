@@ -46,7 +46,7 @@ export function ChatInterface() {
         setIsLoading(true);
 
         try {
-            const response = await chat({ message: currentInput });
+            const response = await chat(currentInput);
             const assistantMessage: Message = { role: 'assistant', content: response };
             setMessages((prev) => [...prev, assistantMessage]);
         } catch (error: any) {
