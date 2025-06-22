@@ -46,6 +46,7 @@ export function ChatInterface() {
         setIsLoading(true);
 
         try {
+            // Pass the message as an object matching the ChatInput schema
             const response = await chat({ message: currentInput });
             const assistantMessage: Message = { role: 'assistant', content: response };
             setMessages((prev) => [...prev, assistantMessage]);

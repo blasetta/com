@@ -3,14 +3,14 @@
  * @fileOverview A chat agent for the ComTech Hub Roma application.
  *
  * - chat - A function that handles the chat interaction.
- * - ChatInput - The input type for the chat function (a string with the user's message).
+ * - ChatInput - The input type for the chat function (an object with a 'message' property).
  * - ChatOutput - The return type for the chat function (a string).
  */
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-// Define a Zod schema for the input object.
+// Define a Zod schema for the input object. This is more robust.
 const ChatInputSchema = z.object({
   message: z.string().describe('The user’s message to the chatbot.'),
 });
