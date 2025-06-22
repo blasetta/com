@@ -15,7 +15,7 @@ interface AuthCheckProps {
 
 export default function AuthCheck({ children, adminOnly = false }: AuthCheckProps) {
   const { user, isUserLoading } = useUser();
-  const { userProfile, isLoading: isProfileLoading } = useUserProfile(user?.uid);
+  const { data: userProfile, isLoading: isProfileLoading } = useUserProfile(user?.uid);
   const router = useRouter();
 
   useEffect(() => {
@@ -37,7 +37,7 @@ export default function AuthCheck({ children, adminOnly = false }: AuthCheckProp
     );
   }
   
-  const isAuthorized = adminOnly ? userProfile?.role !== 'xadmin' : !!user;
+  const isAuthorized = adminOnly ? userProfile?.role === 'admin' : !!user;
 
   if (!isAuthorized) {
     return (
