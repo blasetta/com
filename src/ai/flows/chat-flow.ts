@@ -26,6 +26,26 @@ const prompt = ai.definePrompt({
     schema: ChatInputSchema,
   },
   output: {schema: z.string()},
+  config: {
+    safetySettings: [
+      {
+        category: 'HARM_CATEGORY_HATE_SPEECH',
+        threshold: 'BLOCK_ONLY_HIGH',
+      },
+      {
+        category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
+        threshold: 'BLOCK_ONLY_HIGH',
+      },
+      {
+        category: 'HARM_CATEGORY_HARASSMENT',
+        threshold: 'BLOCK_ONLY_HIGH',
+      },
+      {
+        category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
+        threshold: 'BLOCK_ONLY_HIGH',
+      },
+    ],
+  },
   prompt: `You are a helpful assistant for the "ComTech Hub Roma" web application.
 Your goal is to help users navigate the app and find what they are looking for.
 You can answer questions about the app's features and provide links to relevant pages.
