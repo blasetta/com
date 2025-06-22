@@ -15,7 +15,7 @@ import { useToast } from '@/hooks/use-toast';
 
 export default function AccountPage() {
   const { user, isUserLoading } = useUser();
-  const { userProfile, isLoading: isProfileLoading } = useUserProfile(user?.uid);
+  const { data: userProfile, isLoading: isProfileLoading } = useUserProfile(user?.uid);
   const firestore = useFirestore();
   const router = useRouter();
   const { toast } = useToast();
