@@ -10,15 +10,20 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-// The input is a simple string.
-export type ChatInput = string;
+// Define a Zod schema for the input object.
+const ChatInputSchema = z.object({
+  message: z.string().describe('The user’s message to the chatbot.'),
+});
+
+// The input is an object with a 'message' property.
+export type ChatInput = z.infer<typeof ChatInputSchema>;
 export type ChatOutput = string;
 
 const prompt = ai.definePrompt({
   name: 'chatPrompt',
   input: {
-    // The prompt expects a simple string as input.
-    schema: z.string(),
+    // The prompt expects an object matching ChatInputSchema.
+    schema: ChatInputSchema,
   },
   output: {schema: z.string()},
   prompt: `You are a helpful assistant for the "ComTech Hub Roma" web application.
@@ -41,24 +46,23 @@ If the user is an admin, they also have access to:
 
 When a user asks to perform an action, provide a direct link if possible. For example, if they ask "how to create an event", respond with something like: "You can create a new event on the [admin events page](/admin/events?createNew=true)."
 
-User's message: {{{this}}}
+User's message: {{{message}}}
 `,
 });
 
 const chatFlow = ai.defineFlow(
   {
     name: 'chatFlow',
-    inputSchema: z.string(), // Flow expects a simple string.
+    inputSchema: ChatInputSchema, // Flow expects an object.
     outputSchema: z.string(),
   },
-  async (message) => {
-    // The input 'message' is the raw string.
-    const {output} = await prompt(message);
+  async (input) => {
+    const {output} = await prompt(input);
     return output || '';
   }
 );
 
-export async function chat(message: ChatInput): Promise<ChatOutput> {
-  const response = await chatFlow(message);
+export async function chat(input: ChatInput): Promise<ChatOutput> {
+  const response = await chatFlow(input);
   return response || 'Sorry, I could not process your request.';
 }
