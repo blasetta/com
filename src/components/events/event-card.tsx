@@ -2,7 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Calendar, MapPin, Tag } from 'lucide-react';
+import { Calendar, MapPin, Tag, ArrowUpRight } from 'lucide-react';
 import type { Event } from '@/firebase/models';
 import { Badge } from '@/components/ui/badge';
 
@@ -46,11 +46,12 @@ export function EventCard({ event }: EventCardProps) {
         </div>
         <p className="text-sm leading-relaxed">{event.description}</p>
       </CardContent>
-      <CardFooter className="p-6 pt-0">
-        <Button asChild className="w-full">
+      <CardFooter className="p-6 pt-0 flex justify-end">
+        <Button asChild size="icon" className="rounded-full">
           {/* This should ideally link to an external registration page */}
           <Link href="#">
-            Learn More & Subscribe
+            <ArrowUpRight className="h-4 w-4" />
+            <span className="sr-only">Learn More & Subscribe</span>
           </Link>
         </Button>
       </CardFooter>

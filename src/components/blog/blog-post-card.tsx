@@ -2,7 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowRight } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 import type { BlogPost } from '@/firebase/models';
 
 interface BlogPostCardProps {
@@ -30,16 +30,15 @@ export function BlogPostCard({ post }: BlogPostCardProps) {
         <CardTitle className="font-headline text-xl mb-2">{post.title}</CardTitle>
         <p className="text-muted-foreground text-sm">{snippet}</p>
       </CardContent>
-      <CardFooter className="p-6 pt-0">
+      <CardFooter className="p-6 pt-0 flex justify-end">
         {post.externalURL ? (
-          <Button asChild variant="secondary" className="w-full">
+          <Button asChild size="icon" className="rounded-full">
             <Link href={post.externalURL} target="_blank" rel="noopener noreferrer">
-              Read More <ArrowRight className="ml-2 h-4 w-4" />
+              <ArrowUpRight className="h-4 w-4" />
+              <span className="sr-only">Read More</span>
             </Link>
           </Button>
-        ) : (
-           <p className="text-sm text-muted-foreground italic">Full article coming soon.</p>
-        )}
+        ) : null}
       </CardFooter>
     </Card>
   );
