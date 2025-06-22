@@ -77,7 +77,7 @@ export default function AccountPage() {
             <h3 className="font-medium font-headline">Account Details</h3>
             <div className="text-sm text-muted-foreground space-y-1">
               <p><strong>Role:</strong> <span className="capitalize">{userProfile.role}</span></p>
-              <p><strong>Member Since:</strong> {userProfile.createdAt?.toDate().toLocaleDateString()}</p>
+              <p><strong>Member Since:</strong> {userProfile.createdAt?.toDate()?.toLocaleDateString()}</p>
             </div>
           </div>
           <div className="space-y-2">
