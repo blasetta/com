@@ -26,13 +26,13 @@ export function Header() {
             >
               Blog
             </Link>
-            <Link
+            {/* <Link
               href="/chat"
               className="flex items-center transition-colors hover:text-foreground/80 text-foreground/60"
             >
                <MessageSquare className="mr-2 h-4 w-4" />
               Chat
-            </Link>
+            </Link> */}
           </nav>
         </div>
         <div className="flex flex-1 items-center justify-end space-x-4">
