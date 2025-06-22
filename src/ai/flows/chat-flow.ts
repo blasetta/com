@@ -44,16 +44,16 @@ User's message: {{{prompt}}}
 const chatFlow = ai.defineFlow(
   {
     name: 'chatFlow',
-    inputSchema: z.string(),
+    inputSchema: z.object({ prompt: z.string() }),
     outputSchema: z.string(),
   },
-  async (message) => {
-    const {output} = await prompt({ prompt: message });
+  async (input) => {
+    const {output} = await prompt(input);
     return output || '';
   }
 );
 
 export async function chat(message: ChatInput): Promise<ChatOutput> {
-  const response = await chatFlow(message);
+  const response = await chatFlow({ prompt: message });
   return response || 'Sorry, I could not process your request.';
 }
