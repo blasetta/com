@@ -19,6 +19,20 @@ const ChatInputSchema = z.object({
 export type ChatInput = z.infer<typeof ChatInputSchema>;
 export type ChatOutput = string;
 
+// Define the prompt for the chat assistant.
+const chatPrompt = ai.definePrompt({
+    name: 'chatPrompt',
+    input: { schema: ChatInputSchema },
+    output: { schema: z.string() },
+    prompt: `You are a friendly and helpful assistant for ComTech Hub Roma, a technology community hub in Rome.
+Your goal is to answer user questions about events, blog posts, and the community.
+Be concise and helpful.
+
+User's message: {{{message}}}
+`,
+});
+
+// Define the main flow that orchestrates the chat logic.
 const chatFlow = ai.defineFlow(
   {
     name: 'chatFlow',
@@ -26,29 +40,24 @@ const chatFlow = ai.defineFlow(
     outputSchema: z.string(),
   },
   async (input) => {
-    console.log('XXXXXXXXXXXXX chatFlow received input:', JSON.stringify(input, null, 2));
-
-    // Bypass the prompt and return a fixed response for debugging.
-    if (!input || !input.message) {
-      console.error('XXXXXXXXXXXXX chatFlow received invalid input.');
-      return 'I received an invalid message. Please try again.';
-    }
-    
-    // The real AI call is temporarily disabled.
-    // const {output} = await prompt(input);
-    // return output || '';
-    
-    return `I am in debug mode. I received your message: "${input.message}". The AI prompt is currently bypassed.`;
+    const {output} = await chatPrompt(input);
+    return output || 'I am not sure how to respond to that. Please try rephrasing.';
   }
 );
 
+/**
+ * The public-facing function that UI components will call.
+ * It invokes the Genkit flow and handles basic error cases.
+ * @param input The user's message, conforming to the ChatInput schema.
+ * @returns A string containing the assistant's response.
+ */
 export async function chat(input: ChatInput): Promise<ChatOutput> {
-  console.log('XXXXXXXXXXXXX The `chat` function was called with:', JSON.stringify(input, null, 2));
   try {
     const response = await chatFlow(input);
     return response || 'Sorry, I could not process your request.';
-  } catch (e) {
-    console.error("XXXXXXXXXXXXX Error calling chatFlow:", e);
-    return "An error occurred while processing the chat flow.";
+  } catch (e: any) {
+    console.error("Error calling chatFlow:", e);
+    // Provide a more user-friendly error message.
+    return "An error occurred while communicating with the AI. Please try again later.";
   }
 }
