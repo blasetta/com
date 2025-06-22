@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Send, Bot } from 'lucide-react';
-import { chat } from '@/ai/flows/chat-flow';
+import { chat, type ChatInput } from '@/ai/flows/chat-flow';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { cn } from '@/lib/utils';
@@ -46,8 +46,8 @@ export function ChatInterface() {
         setIsLoading(true);
 
         try {
-            // Pass the message as a raw string.
-            const response = await chat(currentInput);
+            // Pass the message as a ChatInput object.
+            const response = await chat({ message: currentInput });
             const assistantMessage: Message = { role: 'assistant', content: response };
             setMessages((prev) => [...prev, assistantMessage]);
         } catch (error: any) {

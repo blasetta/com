@@ -3,22 +3,26 @@
  * @fileOverview A chat agent for the ComTech Hub Roma application.
  *
  * - chat - A function that handles the chat interaction.
- * - ChatInput - The input type for the chat function (a string).
+ * - ChatInput - The input type for the chat function.
  * - ChatOutput - The return type for the chat function (a string).
  */
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-// The input is a simple string.
-export type ChatInput = string;
+// Define a Zod schema for the chat input.
+const ChatInputSchema = z.object({
+  message: z.string().describe("The user's message to the chat assistant."),
+});
+
+// Export the inferred TypeScript type.
+export type ChatInput = z.infer<typeof ChatInputSchema>;
 export type ChatOutput = string;
 
 const prompt = ai.definePrompt({
   name: 'chatPrompt',
   input: {
-    // The prompt expects a raw string.
-    schema: z.string(),
+    schema: ChatInputSchema,
   },
   output: {schema: z.string()},
   config: {
@@ -61,24 +65,23 @@ If the user is an admin, they also have access to:
 
 When a user asks to perform an action, provide a direct link if possible. For example, if they ask "how to create an event", respond with something like: "You can create a new event on the [admin events page](/admin/events?createNew=true)."
 
-User's message: {{{prompt}}}
+User's message: {{{message}}}
 `,
 });
 
 const chatFlow = ai.defineFlow(
   {
     name: 'chatFlow',
-    inputSchema: z.string(), // Flow expects a string.
+    inputSchema: ChatInputSchema,
     outputSchema: z.string(),
   },
-  async (message) => {
-    // The input 'message' is the raw string.
-    const {output} = await prompt(message);
+  async (input) => {
+    const {output} = await prompt(input);
     return output || '';
   }
 );
 
-export async function chat(message: ChatInput): Promise<ChatOutput> {
-  const response = await chatFlow(message);
+export async function chat(input: ChatInput): Promise<ChatOutput> {
+  const response = await chatFlow(input);
   return response || 'Sorry, I could not process your request.';
 }
