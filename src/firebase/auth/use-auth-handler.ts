@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useUser, useFirestore } from '@/firebase';
-import { doc, getDoc, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { UserProfile } from '../models';
 
 export function useAuthHandler() {
@@ -15,31 +15,28 @@ export function useAuthHandler() {
       return;
     }
 
-    const checkAndCreateOrUpdateUser = async () => {
+    const checkAndCreateUser = async () => {
       setIsProcessing(true);
       const userDocRef = doc(firestore, 'users', user.uid);
       try {
         const docSnap = await getDoc(userDocRef);
 
         if (!docSnap.exists()) {
+          // Create a new user profile with a default 'user' role.
           const newUserProfile: Omit<UserProfile, 'id'> = {
             uid: user.uid,
             email: user.email || '',
             displayName: user.displayName || 'Anonymous User',
             photoURL: user.photoURL,
-            role: 'admin', // default role for testing
+            role: 'user', // Default role for new users
             newsletterSub: true,
             mailAdmin: true,
             createdAt: serverTimestamp(),
           };
           await setDoc(userDocRef, newUserProfile);
-        } else {
-          // If user exists, check their role and update if not admin for testing
-          const userProfile = docSnap.data() as UserProfile;
-          if (userProfile.role !== 'admin') {
-            await updateDoc(userDocRef, { role: 'admin' });
-          }
         }
+        // We no longer automatically update existing users' roles.
+        // Role management should be handled by an admin in the UI.
       } catch (error) {
         console.error("Error in user auth handler:", error);
       } finally {
@@ -47,6 +44,6 @@ export function useAuthHandler() {
       }
     };
 
-    checkAndCreateOrUpdateUser();
+    checkAndCreateUser();
   }, [user, isUserLoading, firestore, isProcessing]);
 }

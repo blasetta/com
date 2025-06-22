@@ -59,6 +59,8 @@ const chatFlow = ai.defineFlow(
 );
 
 export async function chat(input: ChatInput): Promise<ChatOutput> {
-  const response = await chatFlow(input);
-  return response || 'Sorry, I could not process your request.';
+  const ba=
+  return JSON.stringify(input);
+  //const response = await chatFlow(input);
+  //return response || 'Sorry, I could not process your request.';
 }
