@@ -18,7 +18,7 @@ interface EventListProps {
 export function EventList({ type }: EventListProps) {
   const firestore = useFirestore();
   const { user, isUserLoading } = useUser();
-  const { userProfile, isLoading: isProfileLoading } = useUserProfile(user?.uid);
+  const { data: userProfile, isLoading: isProfileLoading } = useUserProfile(user?.uid);
   const [now] = useState(() => Timestamp.now());
   
   const eventsQuery = useMemo(() => {
@@ -54,9 +54,9 @@ export function EventList({ type }: EventListProps) {
         <div className="text-center py-10 border-2 border-dashed border-muted rounded-lg flex flex-col items-center justify-center">
             <h3 className="text-xl font-semibold text-muted-foreground">No {type} events found.</h3>
             <p className="mt-2 text-muted-foreground">Check back later for new events.</p>
-            {userProfile?.role !== 'xadmin' && (
+            {userProfile?.role === 'admin' && (
             <Button asChild className="mt-4">
-                <Link href="/admin/events">
+                <Link href="/admin/events?createNew=true">
                 <PlusCircle className="mr-2 h-4 w-4" />
                 Create a New Event
                 </Link>

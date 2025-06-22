@@ -22,7 +22,7 @@ import { useAuthHandler } from '@/firebase/auth/use-auth-handler';
 
 export function UserNav() {
   const { user, isUserLoading } = useUser();
-  const { userProfile, isLoading: isProfileLoading } = useUserProfile(user?.uid);
+  const { data: userProfile, isLoading: isProfileLoading } = useUserProfile(user?.uid);
   const auth = useAuth();
   const router = useRouter();
   
@@ -81,7 +81,7 @@ export function UserNav() {
               <span>Account</span>
             </Link>
           </DropdownMenuItem>
-          {userProfile?.role !== 'xadmin' && (
+          {userProfile?.role === 'admin' && (
             <>
               <DropdownMenuItem asChild>
                 <Link href="/admin">
