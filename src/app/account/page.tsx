@@ -27,7 +27,7 @@ export default function AccountPage() {
   }, [user, isUserLoading, router]);
   
   const handleNewsletterToggle = async (checked: boolean) => {
-    if (!user || !firestore) return;
+    if (!user || !firestore || !userProfile) return;
     const userDocRef = doc(firestore, 'users', user.uid);
     try {
       await updateDoc(userDocRef, { newsletterSub: checked });
