@@ -13,12 +13,6 @@ import {z} from 'genkit';
 export type ChatInput = string;
 export type ChatOutput = string;
 
-export async function chat(message: ChatInput): Promise<ChatOutput> {
-  const chatFlow = ai.getFlow('chatFlow');
-  const {output} = await chatFlow(message);
-  return output || 'Sorry, I could not process your request.';
-}
-
 const prompt = ai.definePrompt({
   name: 'chatPrompt',
   input: {schema: z.string()},
@@ -47,7 +41,7 @@ User's message: {{{prompt}}}
 `,
 });
 
-ai.defineFlow(
+const chatFlow = ai.defineFlow(
   {
     name: 'chatFlow',
     inputSchema: z.string(),
@@ -58,3 +52,8 @@ ai.defineFlow(
     return output || '';
   }
 );
+
+export async function chat(message: ChatInput): Promise<ChatOutput> {
+  const response = await chatFlow(message);
+  return response || 'Sorry, I could not process your request.';
+}
