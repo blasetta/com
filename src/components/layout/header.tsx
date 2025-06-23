@@ -1,8 +1,8 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { UserNav } from '@/components/layout/user-nav';
-import { Code2, MessageSquare } from 'lucide-react';
 
 export function Header() {
   return (
@@ -10,8 +10,12 @@ export function Header() {
       <div className="container flex h-14 items-center">
         <div className="mr-4 flex items-center">
           <Link href="/" className="mr-6 flex items-center space-x-2">
-            <Code2 className="h-6 w-6 text-primary" />
-            <span className="font-bold font-headline">ComTech Hub Roma</span>
+            <Image
+              src="https://www.scripps.org/sparkle-assets/images/rome_maroon_skyline-072055627ed3114a844958d5337549fb.svg"
+              alt="ComTech Hub Roma Logo"
+              width={200}
+              height={35}
+            />
           </Link>
           <nav className="hidden items-center space-x-6 text-sm font-medium md:flex">
             <Link
