@@ -11,10 +11,11 @@ export function Header() {
         <div className="mr-4 flex items-center">
           <Link href="/" className="mr-6 flex items-center space-x-2">
             <Image
-              src="https://www.scripps.org/sparkle-assets/images/rome_maroon_skyline-072055627ed3114a844958d5337549fb.svg"
+              src="https://placehold.co/200x35.png"
               alt="ComTech Hub Roma Logo"
               width={200}
               height={35}
+              data-ai-hint="logo rome"
             />
           </Link>
           <nav className="hidden items-center space-x-6 text-sm font-medium md:flex">
