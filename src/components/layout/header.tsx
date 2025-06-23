@@ -11,11 +11,10 @@ export function Header() {
         <div className="mr-4 flex items-center">
           <Link href="/" className="mr-6 flex items-center space-x-2">
             <Image
-              src="https://placehold.co/200x35.png"
+              src="https://storage.googleapis.com/gdgsite/gdg.svg"
               alt="ComTech Hub Roma Logo"
-              width={200}
-              height={35}
-              data-ai-hint="logo rome"
+              width={150}
+              height={26}
             />
           </Link>
           <nav className="hidden items-center space-x-6 text-sm font-medium md:flex">

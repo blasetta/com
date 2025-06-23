@@ -18,7 +18,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'www.scripps.org',
+        hostname: 'storage.googleapis.com',
         port: '',
         pathname: '/**',
       },
