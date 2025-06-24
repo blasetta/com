@@ -19,6 +19,10 @@ export default function LoginPage() {
       toast({ title: "Successfully logged in." });
       router.push('/account');
     } catch (error: any) {
+      if (error.code === 'auth/popup-closed-by-user') {
+        console.log('Sign-in popup closed by user.');
+        return;
+      }
       console.error('Google Sign-In Error', error);
       toast({
         title: 'Authentication Error',

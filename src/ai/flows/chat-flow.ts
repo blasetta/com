@@ -3,51 +3,66 @@
  * @fileOverview A chat agent for the ComTech Hub Roma application.
  *
  * - chat - A function that handles the chat interaction.
- * - ChatInput - The input type for the chat function (a string).
+ * - ChatInput - The input type for the chat function (an object with a message).
  * - ChatOutput - The return type for the chat function (a string).
  */
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-// The input is a simple string.
-export type ChatInput = string;
+const ChatInputSchema = z.object({
+    message: z.string(),
+});
+export type ChatInput = z.infer<typeof ChatInputSchema>;
 export type ChatOutput = string;
 
-// Define the main flow that orchestrates the chat logic.
+const prompt = ai.definePrompt({
+  name: 'chatPrompt',
+  input: {
+    schema: ChatInputSchema,
+  },
+  output: {schema: z.string()},
+  prompt: `You are a helpful assistant for the "ComTech Hub Roma" web application.
+Your goal is to help users navigate the app and find what they are looking for.
+You can answer questions about the app's features and provide links to relevant pages.
+Keep your responses concise and friendly. Use Markdown for formatting, especially for links.
+
+Here are the main pages of the application:
+- /events: Browse upcoming and past community events.
+- /blog: Read articles and news from the community.
+- /account: View and manage your user profile.
+- /chat: This is the page you are currently on.
+
+If the user is an admin, they also have access to:
+- /admin: The main admin dashboard.
+- /admin/events: Create, edit, and delete events.
+- /admin/blog: Create, edit, and delete blog posts.
+- /admin/users: Manage user roles.
+- /admin/newsletter: Create new newsletters.
+
+When a user asks to perform an action, provide a direct link if possible. For example, if they ask "how to create an event", respond with something like: "You can create a new event on the [admin events page](/admin/events?createNew=true)."
+
+User's message: {{{message}}}
+`,
+});
+
 const chatFlow = ai.defineFlow(
   {
     name: 'chatFlow',
-    inputSchema: z.string(),
+    inputSchema: ChatInputSchema,
     outputSchema: z.string(),
   },
-  async (message) => {
-    // We call the model directly, providing the full prompt.
-    const {output} = await ai.generate({
-        prompt: `You are a friendly and helpful assistant for ComTech Hub Roma, a technology community hub in Rome.
-Your goal is to answer user questions about events, blog posts, and the community.
-Be concise and helpful.
-
-User's message: ${message}
-`,
-    });
-    return output || 'I am not sure how to respond to that. Please try rephrasing.';
+  async (input) => {
+    //const {output} = await prompt(input);
+    //return output || '';
+    
+    return 
   }
 );
 
-/**
- * The public-facing function that UI components will call.
- * It invokes the Genkit flow and handles basic error cases.
- * @param message The user's message as a string.
- * @returns A string containing the assistant's response.
- */
-export async function chat(message: ChatInput): Promise<ChatOutput> {
-  try {
-    const response = await chatFlow(message);
-    return response || 'Sorry, I could not process your request.';
-  } catch (e: any) {
-    console.error("Error calling chatFlow:", e);
-    // Provide a more user-friendly error message.
-    return "An error occurred while communicating with the AI. Please try again later.";
-  }
+export async function chat(input: ChatInput): Promise<ChatOutput> {
+  const ba=
+  return JSON.stringify(input);
+  //const response = await chatFlow(input);
+  //return response || 'Sorry, I could not process your request.';
 }
