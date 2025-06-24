@@ -46,8 +46,8 @@ export function ChatInterface() {
         setIsLoading(true);
 
         try {
-            // Pass the message as a raw string.
-            const response = await chat(currentInput);
+            // Pass the message as an object matching the schema.
+            const response = await chat({ message: currentInput });
             const assistantMessage: Message = { role: 'assistant', content: response };
             setMessages((prev) => [...prev, assistantMessage]);
         } catch (error: any) {
