@@ -30,6 +30,12 @@ export function Header() {
             >
               Blog
             </Link>
+            <Link
+              href="/uppercase"
+              className="transition-colors hover:text-foreground/80 text-foreground/60"
+            >
+              Uppercase
+            </Link>
             {/* <Link
               href="/chat"
               className="flex items-center transition-colors hover:text-foreground/80 text-foreground/60"
