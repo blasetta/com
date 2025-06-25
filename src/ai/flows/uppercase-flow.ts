@@ -30,7 +30,8 @@ const uppercaseFlow = ai.defineFlow(
   },
   async (input) => {
     // IMPORTANT: Replace this with the real URL of your Cloud Function.
-    const externalFunctionUrl = 'https://<your-region>-<your-project-id>.cloudfunctions.net/yourHttpsFunction';
+    //const externalFunctionUrl = 'https://<your-region>-<your-project-id>.cloudfunctions.net/yourHttpsFunction';
+    const externalFunctionUrl ='https://test-991612141138.us-central1.run.app/?name=%22xxxx%22'
 
     // This is a placeholder. If you enter a real URL, the code will run.
     if (externalFunctionUrl.includes('<your-region>')) {
