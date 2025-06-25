@@ -31,7 +31,7 @@ const uppercaseFlow = ai.defineFlow(
   async (input) => {
     // IMPORTANT: Replace this with the real URL of your Cloud Function.
     //const externalFunctionUrl = 'https://<your-region>-<your-project-id>.cloudfunctions.net/yourHttpsFunction';
-    const externalFunctionUrl ='https://test-991612141138.us-central1.run.app/?name=%22xxxx%22'
+    const externalFunctionUrl ='https://test-991612141138.us-central1.run.app'
 
     // This is a placeholder. If you enter a real URL, the code will run.
     if (externalFunctionUrl.includes('<your-region>')) {
@@ -52,7 +52,7 @@ const uppercaseFlow = ai.defineFlow(
         url: externalFunctionUrl,
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        data: {text: input.text},
+        data: {name: input.text},
       });
 
       // Assuming the function returns something like { uppercasedText: '...' }
@@ -60,8 +60,9 @@ const uppercaseFlow = ai.defineFlow(
       return result.uppercasedText;
 
     } catch (error: any) {
-      console.error('Error calling external function:', error.message || error);
-      throw new Error('Failed to process text via external service.');
+      console.error('Error calling external function:', error.message || error)
+      //message = f"Failed to process text via external service. {error.message} years old."
+      throw new Error('Error calling external function:'+error.message || error);
     }
   }
 );
