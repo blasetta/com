@@ -48,21 +48,38 @@ const uppercaseFlow = ai.defineFlow(
       const client = await auth.getIdTokenClient(externalFunctionUrl);
 
       // Make the authenticated request.
+      // The payload is now { text: "..." } to match what a simple function would likely expect.
       const response = await client.request({
         url: externalFunctionUrl,
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        data: {name: input.text},
+        data: {text: input.text},
       });
 
-      // Assuming the function returns something like { uppercasedText: '...' }
-      const result = response.data as { uppercasedText: string };
-      return result.uppercasedText;
+      // Handle different possible response formats from the external function.
+      const resultData = response.data;
+      if (typeof resultData === 'string') {
+        return resultData;
+      }
+      if (typeof resultData === 'object' && resultData !== null) {
+        if ('uppercasedText' in resultData && typeof resultData.uppercasedText === 'string') {
+            return resultData.uppercasedText;
+        }
+        if ('result' in resultData && typeof resultData.result === 'string') {
+            return resultData.result;
+        }
+        if ('text' in resultData && typeof resultData.text === 'string') {
+            return resultData.text;
+        }
+      }
+
+      // If the format is unknown, throw an error.
+      throw new Error('Received an unexpected response format from the external function.');
 
     } catch (error: any) {
-      console.error('Error calling external function:', error.message || error)
-      //message = f"Failed to process text via external service. {error.message} years old."
-      throw new Error('Error calling external function:'+error.message || error);
+      console.error('Error calling external function:', error.response?.data || error.message || error);
+      const message = error.response?.data?.error || error.message || 'An unknown error occurred';
+      throw new Error(`Failed to process text via external service. ${message}`);
     }
   }
 );
